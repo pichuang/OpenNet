@@ -53,15 +53,17 @@ function detect_os {
 
 function mininet {
 
-    echo "Fetch Mininet"
+    echo "Fetch dlinknctu/mininet"
+    echo "Base on Mininet $MININET_VERSION"
+    echo "Default branch: opennet"
     cd $ROOT_PATH
     if [ ! -d mininet ]; then
-        git clone https://github.com/mininet/mininet.git
+        git clone --branch opennet https://github.com/dlinknctu/mininet.git
     fi
 
-    cd $ROOT_PATH/mininet && git checkout tags/$MININET_VERSION
-    cp $ROOT_PATH/mininet-patch/util/install.sh $ROOT_PATH/mininet/util/
-    ./util/install.sh -fn
+    echo "Install mininet"
+    cd $ROOT_PATH/mininet/
+    ./util/install.sh -n
 
 }
 
@@ -170,20 +172,9 @@ function opennet {
 
     echo "Install OpenNet"
     cd $ROOT_PATH
-    echo "Patch Mininet"
-    cp $ROOT_PATH/mininet-patch/mininet/* $ROOT_PATH/mininet/mininet/
+    echo "Copy files to Mininet directory"
     cp -R $ROOT_PATH/mininet-patch/examples/* $ROOT_PATH/mininet/examples/
-    cp -R $ROOT_PATH/mininet-patch/util/* $ROOT_PATH/mininet/util/
-    cd $ROOT_PATH/mininet/mininet
-    patch -p2 < node.patch
-    patch -p2 < net.patch
-    cd $ROOT_PATH/mininet/examples
-    patch -p2 < whoami.patch
-    cd $ROOT_PATH/mininet/util
-    patch -p2 < clustersetup.patch
-
-    #rebuild mininet
-    $ROOT_PATH/mininet/util/install.sh -n
+    cp -R $ROOT_PATH/mininet-patch/mininet/* $ROOT_PATH/mininet/mininet/
 
     echo "Patch NS3"
     cp $ROOT_PATH/ns3-patch/*.patch $ROOT_PATH/ns-allinone-$NS3_VERSION/ns-$NS3_VERSION
